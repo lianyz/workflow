@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+option go_package="./;pei";
+package pei;
+
+service ProcessEngine {
+  rpc GetProcessDefine(GetProcessDefineRequest) returns (ProcessDefine);
+  rpc GetUsers(GetUsersRequest) returns (GetUsersReply);
+  rpc CreateProcessInstance(ProcessInstance) returns (CreateProcessInstanceReply);
+  rpc GetInstance(GetInstanceRequest) returns (ProcessInstance);
+  rpc GetTasks(GetTasksRequest) returns (GetTasksReply);
+  rpc CompleteTask(CompleteTaskRequest) returns (CompleteTaskReply);
+}
+
+message GetProcessDefineRequest {
+  string processDefineID = 1;
+}
+
+message ProcessDefine {
+  string id = 1;
+  string name = 2;
+  repeated Node nodes = 3;
+}
+
+message Node{
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string processDefineID = 4;
+  string nextNodeID = 5;
+  string roleID = 6;
+}
+
+message ProcessInstance {
+  string id = 1;
+  string name = 2;
+  string processDefineID = 3;
+
+  int32 currentTaskIndex = 4;
+  repeated Task tasks = 5;
+
+  string startTime = 6;
+  string endTime = 7;
+  int64 Duration = 8;
+
+  User startUser = 9;
+  bool isFinished = 10;
+}
+
+message Task {
+  string id = 1;
+  string name = 2;
+
+  string processInstanceID = 3;
+  string nodeID = 4;
+  string nextTaskID = 5;
+
+  bool isPassed = 6;
+
+  User executor = 7;
+  string executorComment = 8;
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string department = 3;
+}
+
+message GetUsersRequest {
+  string roleID = 1;
+}
+
+message GetUsersReply {
+  repeated User users = 1;
+}
+
+message CreateProcessInstanceReply {
+  string processInstanceID = 1;
+}
+
+message GetInstanceRequest {
+  string processInstanceID = 1;
+}
+
+message GetTasksRequest {
+  string userID = 1;
+
+  int32 pageIndex = 2;
+  int32 pageSize = 3;
+}
+
+message GetTasksReply {
+  repeated Task tasks = 1;
+}
+
+message CompleteTaskRequest {
+  string processInstanceID = 3;
+  string taskID = 4;
+
+  bool isPassed = 5;
+  string comment = 6;
+
+  User executor = 7;
+}
+
+message CompleteTaskReply {
+  bool succeed = 1;
+}
